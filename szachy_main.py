@@ -108,9 +108,8 @@ class board:
             b = (b & 0x00ff00ff00ff00ff) << 8 | ((b >> 8) & 0x00ff00ff00ff00ff)
 
             return (b << 48) | ((b & 0xffff0000) << 16) | ((b >> 16) & 0xffff0000) | (b >> 48)
+        # assure there is only one piece
         assert slider&(slider-1) == 0
-        #mask = self.masks['diagonal'][self.check_bits(slider)%8]
-        #mask = self.masks['diagonal'][self.check_bits(slider)%8+8-self.check_bits(slider)//8]
 
         
         #cross_attack_hor = (self.occupied&mask)^((self.occupied&mask)-2*slider)
