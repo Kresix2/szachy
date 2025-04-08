@@ -1,3 +1,4 @@
+import display
 class board:
     def __init__(self):
         #//////////////////////
@@ -297,9 +298,9 @@ class board:
         self.bitboards[piece_name] &= ~piece
         self.bitboards[piece_name] |= destination
     
-    def possible_moves_compiled(self,piece,piece_name):
+    def possible_moves_compiled(self,piece_index,piece_name):
 
-        piece_index = self.check_bits(piece)
+        piece = 0b1<<piece_index
         base_move = 0XFFFFFFFFFFFFFFFF
         side = piece_name[:1]
         piece_name = piece_name[1:]
@@ -314,10 +315,10 @@ class board:
             case 'queen':
                 base_move = self.possible_moves_cross(piece)|self.possible_moves_diagonals(piece)
             case 'bishop':
-                base_move = self.generate_mask_diagonal()
+                base_move = self.possible_moves_cross(piece)
 
             case 'rook':
-                base_move = self.generate_mask_cross()
+                base_move = self.possible_moves_cross(piece)
 
             case 'king':
                 base_move = self.moves['king'][piece_index]
@@ -326,6 +327,7 @@ class board:
             
         base_move &= self.occupied_sides[side]^self.inside
         self.log_bitboard(base_move,piece)
+        return base_move
             
 
 
@@ -374,8 +376,13 @@ class board:
             return '{:064b}'.format(binaries)
         for binary in binaries:
             return_bin.append('{:064b}'.format(binary))
-        return return_bin        
-            
+        return return_bin     
+    def find_piece(self,piece_index):
+
+        for name,bitboard in self.bitboards.items():
+            if bitboard&(1<<piece_index) !=0:
+                return name
+        
 
 
 
@@ -391,6 +398,6 @@ class board:
 
         
 b = board()
-
-b.possible_moves_compiled(0b00000000_00000000_00000000_00000000_00010000_00000000_00000000_00000000,'Wqueen')
+print(b.find_piece(1))
+#b.possible_moves_compiled(0b00000000_00000000_00000000_00000000_00010000_00000000_00000000_00000000,'Wqueen')
 #b.possible_moves_compiled(0b00000000_00000000_00000000_00000000_00000000_00000000_00000000_00001000,'Brook')
